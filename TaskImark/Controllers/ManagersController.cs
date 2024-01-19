@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿//Registering database context
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TaskImark.DTOs;
 using TaskImark.Models;
 
 namespace TaskImark.Controllers
@@ -13,9 +10,10 @@ namespace TaskImark.Controllers
     [ApiController]
     public class ManagersController : ControllerBase
     {
-        private readonly Models.AppDbContext _context;
+        private readonly AppDbContext _context;
+        
 
-        public ManagersController(Models.AppDbContext context)
+        public ManagersController(AppDbContext context)
         {
             _context = context;
         }
@@ -24,7 +22,8 @@ namespace TaskImark.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Manager>>> GetManagers()
         {
-            return await _context.Managers.ToListAsync();
+            var visitors = await _context.Managers.ToListAsync();
+            return visitors;
         }
 
         // GET: api/Managers/5
@@ -32,7 +31,7 @@ namespace TaskImark.Controllers
         public async Task<ActionResult<Manager>> GetManager(int id)
         {
             var manager = await _context.Managers.FindAsync(id);
-
+            
             if (manager == null)
             {
                 return NotFound();
@@ -40,13 +39,39 @@ namespace TaskImark.Controllers
 
             return manager;
         }
+        //Get: api/Managers/2/Visitors
+        [HttpGet("{id}/Visitors")]
+        public async Task<ActionResult<List<ResVisitorDTO>>> GetVisitorsByManager(int id)
+        {
+            
+            
+            var visitors = await _context.Visitors.Where(x => x.ManagerId == id).ToListAsync();
+
+            var visitorsDTO = (from visitorDTO in visitors select new ResVisitorDTO()
+                               {
+                                   Id = visitorDTO.Id,  
+                                   FirstName = visitorDTO.FirstName,
+                                   LastName = visitorDTO.LastName,
+                                   Address = visitorDTO.Address,
+                                   Phone = visitorDTO.Phone,
+                                   Gender = visitorDTO.Gender,
+                                   Remarks = visitorDTO.Remarks,
+                                   Date = visitorDTO.Date,
+                               }).ToList();
+            if (visitorsDTO == null)
+            {
+                return NotFound();
+            }
+
+            return visitorsDTO;
+        }
 
         // PUT: api/Managers/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutManager(int id, Manager manager)
         {
-            if (id != manager.ManagerId)
+            if (id != manager.Id)
             {
                 return BadRequest();
             }
@@ -80,8 +105,8 @@ namespace TaskImark.Controllers
             _context.Managers.Add(manager);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetManager", new { id = manager.ManagerId }, manager);
-        }
+            return CreatedAtAction(nameof(GetManager), new { id = manager.Id }, manager);
+        }  
 
         // DELETE: api/Managers/5
         [HttpDelete("{id}")]
@@ -101,7 +126,7 @@ namespace TaskImark.Controllers
 
         private bool ManagerExists(int id)
         {
-            return _context.Managers.Any(e => e.ManagerId == id);
+            return _context.Managers.Any(e => e.Id == id);
         }
     }
 }

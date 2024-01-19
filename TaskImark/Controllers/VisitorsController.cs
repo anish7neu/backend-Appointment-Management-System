@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿//Registering database context
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TaskImark.DTOs;
 using TaskImark.Models;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace TaskImark.Controllers
 {
@@ -10,51 +10,69 @@ namespace TaskImark.Controllers
     [ApiController]
     public class VisitorsController : ControllerBase
     {
-        private readonly Models.AppDbContext _context;
+        private readonly AppDbContext _context;
 
-        public VisitorsController(Models.AppDbContext context)
+        public VisitorsController(AppDbContext context)
         {
             _context = context;
         }
 
-        // GET: api/<VisitorsController>
+        // GET: api/Visitors
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Visitor>>> GetVisitors()
+        public async Task<ActionResult<IEnumerable<ReqVisitorDTO>>> GetVisitors()
         {
-            return await _context.Visitors.ToListAsync();
-        }
-        // GET api/<VisitorsController>/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Visitor>> GetVisitor(int id)
-        {
-            var visitor = await _context.Visitors.FindAsync(id);
+            var visitors = await _context.Visitors.ToListAsync();
+            var visitorsDTO = (from visitorDTO in visitors select new ReqVisitorDTO()
 
+            {
+                
+                FirstName = visitorDTO.FirstName,
+                LastName = visitorDTO.LastName,
+                Address = visitorDTO.Address,
+                Phone = visitorDTO.Phone,
+                Gender = visitorDTO.Gender,
+                Remarks = visitorDTO.Remarks,
+                ManagerId = visitorDTO.ManagerId,
+                Date = visitorDTO.Date,
+            }).ToList();
+            
+
+            return visitorsDTO;
+        }
+
+        // GET: api/Visitors/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ReqVisitorDTO>> GetVisitor(int id)
+        {
+
+            var visitor = await _context.Visitors.FindAsync(id);
+            var visitorDTO = new ReqVisitorDTO
+            {
+                Id = visitor.Id,
+                FirstName = visitor.FirstName,
+                LastName = visitor.LastName,
+                Address = visitor.Address,
+                Phone = visitor.Phone,
+                Gender = visitor.Gender,
+                Remarks = visitor.Remarks,
+                ManagerId = visitor.ManagerId,
+                Date = visitor.Date,
+            };
             if (visitor == null)
             {
                 return NotFound();
             }
 
-            return visitor;
+            return visitorDTO;
         }
+        
 
-    
-
-        // POST api/<VisitorsController>
-        [HttpPost]
-        public async Task<ActionResult<Visitor>> PostVisitor(Visitor visitor)
-        {
-            
-            _context.Visitors.Add(visitor);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetVisitor", new { id = visitor.VisitorId }, visitor);
-        }
-
-        // PUT api/<VisitorsController>/5
+        // PUT: api/Visitors/5
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutVisitor(int id, Visitor visitor)
         {
-            if (id != visitor.VisitorId)
+            if (id != visitor.Id)
             {
                 return BadRequest();
             }
@@ -80,7 +98,32 @@ namespace TaskImark.Controllers
             return NoContent();
         }
 
-        // DELETE api/<VisitorsController>/5
+        // POST: api/Visitors
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPost]
+        public async Task<ActionResult<Visitor>> PostVisitor(ResVisitorDTO visitorDTO)
+        {
+            var visitor = new Visitor {
+                
+                FirstName = visitorDTO.FirstName,   
+                LastName = visitorDTO.LastName, 
+                Address = visitorDTO.Address,
+                Phone = visitorDTO.Phone,   
+                Gender = visitorDTO.Gender,
+                ManagerId = visitorDTO.ManagerId,
+                Remarks = visitorDTO.Remarks,
+                Date = visitorDTO.Date,
+                
+            };
+            _context.Visitors.Add(visitor);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(GetVisitor), new { id = visitor.Id }, visitor);
+        }
+
+
+
+        // DELETE: api/Visitors/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteVisitor(int id)
         {
@@ -98,7 +141,7 @@ namespace TaskImark.Controllers
 
         private bool VisitorExists(int id)
         {
-            return _context.Visitors.Any(e => e.VisitorId == id);
+            return _context.Visitors.Any(e => e.Id == id);
         }
     }
 }

@@ -7,40 +7,18 @@ namespace TaskImark.Models
 {
     public class Visitor
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        [Key]
-        public int VisitorId { get; set; }
-
-        [StringLength(50)]
-        [Required]
+        
+         
+        public int Id { get; set; }
         public  string FirstName { get; set; }
-
-        [StringLength(50)]
-        [Required]
-        public  string LastName { get; set; }
-
-        [StringLength(100)]
-        [Required]
+        public string LastName { get; set; }
         public string Address { get; set; }
-
-        [StringLength(10)]
-        [Required]
         public string Phone { get; set; }
-
-        [StringLength(10)]
-        [Required]
         public string Gender { get; set; }
-
-        [StringLength(200)]
-        [Required]
-        public string? Remarks { get; set; }
-
-        [ForeignKey("Manager")]
-        [Required]
+        public string Remarks { get; set; }
         public int ManagerId { get; set; }
-
-        [Required]
-        public required DateOnly Date { get; set; }    
+        public virtual Manager Manager { get; set; }
+        public DateOnly Date { get; set; }    
         
     }
 }

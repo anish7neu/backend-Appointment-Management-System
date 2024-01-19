@@ -1,12 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace TaskImark.Models
+﻿namespace TaskImark.DTOs
 {
-    public class Manager
+    public class ResManagerDTO
     {
-        
-        public int Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Address { get; set; }
