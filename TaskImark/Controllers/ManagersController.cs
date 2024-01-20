@@ -41,13 +41,13 @@ namespace TaskImark.Controllers
         }
         //Get: api/Managers/2/Visitors
         [HttpGet("{id}/Visitors")]
-        public async Task<ActionResult<List<ResVisitorDTO>>> GetVisitorsByManager(int id)
+        public async Task<ActionResult<List<ReqVisitorDTO>>> GetVisitorsByManager(int id)
         {
             
             
             var visitors = await _context.Visitors.Where(x => x.ManagerId == id).ToListAsync();
 
-            var visitorsDTO = (from visitorDTO in visitors select new ResVisitorDTO()
+            var visitorsDTO = (from visitorDTO in visitors select new ReqVisitorDTO()
                                {
                                    Id = visitorDTO.Id,  
                                    FirstName = visitorDTO.FirstName,
@@ -56,6 +56,7 @@ namespace TaskImark.Controllers
                                    Phone = visitorDTO.Phone,
                                    Gender = visitorDTO.Gender,
                                    Remarks = visitorDTO.Remarks,
+                                   ManagerId = visitorDTO.ManagerId,
                                    Date = visitorDTO.Date,
                                }).ToList();
             if (visitorsDTO == null)

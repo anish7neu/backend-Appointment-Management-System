@@ -25,7 +25,7 @@ namespace TaskImark.Controllers
             var visitorsDTO = (from visitorDTO in visitors select new ReqVisitorDTO()
 
             {
-                
+                Id = visitorDTO.Id,
                 FirstName = visitorDTO.FirstName,
                 LastName = visitorDTO.LastName,
                 Address = visitorDTO.Address,
@@ -46,7 +46,7 @@ namespace TaskImark.Controllers
         {
 
             var visitor = await _context.Visitors.FindAsync(id);
-            var visitorDTO = new ReqVisitorDTO
+            var visitorDTO = new ReqVisitorDTO()
             {
                 Id = visitor.Id,
                 FirstName = visitor.FirstName,
@@ -103,17 +103,17 @@ namespace TaskImark.Controllers
         [HttpPost]
         public async Task<ActionResult<Visitor>> PostVisitor(ResVisitorDTO visitorDTO)
         {
-            var visitor = new Visitor {
-                
-                FirstName = visitorDTO.FirstName,   
-                LastName = visitorDTO.LastName, 
+            var visitor = new Visitor()
+            {
+
+                FirstName = visitorDTO.FirstName,
+                LastName = visitorDTO.LastName,
                 Address = visitorDTO.Address,
-                Phone = visitorDTO.Phone,   
+                Phone = visitorDTO.Phone,
                 Gender = visitorDTO.Gender,
                 ManagerId = visitorDTO.ManagerId,
                 Remarks = visitorDTO.Remarks,
                 Date = visitorDTO.Date,
-                
             };
             _context.Visitors.Add(visitor);
             await _context.SaveChangesAsync();

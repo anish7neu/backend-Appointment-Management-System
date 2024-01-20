@@ -7,18 +7,21 @@ namespace TaskImark.Models
 {
     public class Visitor
     {
-        
-         
         public int Id { get; set; }
-        public  string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string Address { get; set; }
-        public string Phone { get; set; }
-        public string Gender { get; set; }
-        public string Remarks { get; set; }
-        public int ManagerId { get; set; }
+        [StringLength(30)]
+        public required string FirstName { get; set; }
+        [StringLength(30)]
+        public required string LastName { get; set; }
+        [StringLength(30)]
+        public required string Address { get; set; }
+        [StringLength(50)]
+        public required string Phone { get; set; }
+        [StringLength(6)]
+        public required string Gender { get; set; }
+        [StringLength(200)]
+        public string? Remarks { get; set; }
+        public required int ManagerId { get; set; }
         public virtual Manager Manager { get; set; }
-        public DateOnly Date { get; set; }    
-        
+        public required DateOnly Date { get; set; } 
     }
 }

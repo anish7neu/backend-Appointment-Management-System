@@ -7,10 +7,15 @@ namespace TaskImark.Models
     {
         
         public int Id { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string Address { get; set; }
-        public string Phone { get; set; }
-        public string Gender { get; set; }
+        [StringLength(30)]
+        public required string FirstName { get; set; }
+        [StringLength(30)]
+        public required string LastName { get; set; }
+        [StringLength(30)]
+        public required string Address { get; set; }
+        [StringLength(10)]
+        public required string Phone { get; set; }
+        [StringLength(6)]
+        public required string Gender { get; set; }
     }
 }
